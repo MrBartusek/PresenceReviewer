@@ -1,10 +1,10 @@
 {
-  "name": "PresenceReviewer",
+  "name": "presence-reviewer",
   "version": "1.0.0",
   "private": true,
   "description": "A Probot app",
   "author": "MrBartusek <bartusekcraft@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "homepage": "https://github.com/MrBartusek/PresenceReviewer",
   "keywords": [
     "probot",
@@ -17,7 +17,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "probot": "^11.0.1"
+    "dedent-js": "^1.0.1",
+    "probot": "^12.1.1"
   },
   "devDependencies": {
     "@types/jest": "^26.0.19",
