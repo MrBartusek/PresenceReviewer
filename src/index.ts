@@ -1,7 +1,8 @@
 import dedent from 'dedent-js';
 import { Probot } from 'probot';
 import { praseRequest } from './praseRequest';
-import { InvalidSchemaError } from './errors';
+import { verifyUrl } from './verifyUrl';
+import { InvalidRequestError } from './errors';
 import * as graphql from './graphql';
 
 export = (app: Probot) => {
@@ -15,12 +16,13 @@ export = (app: Probot) => {
 		}
 
 		// Validate the schema
-		let request; 
+		let request, verifyUrlResult;
 		const body = await graphql.getDiscussionBody(context, discussion.number);
 		try {
 			request = praseRequest(body);
+			verifyUrlResult = await verifyUrl(app.log, request.serviceUrl);
 		} catch (error) {
-			if(error instanceof InvalidSchemaError) {
+			if(error instanceof InvalidRequestError) {
 				await graphql.labelDiscussion(context, { invalid: true });
 				return commentRequest(context, error.message);
 			}
@@ -30,7 +32,7 @@ export = (app: Probot) => {
 		}
 
 		await graphql.labelDiscussion(context, {
-			popular: false,
+			popular: verifyUrlResult.popular,
 			regionRestricted: request.regionRestricted,
 			paidService: request.paidService,
 			nsfw: request.nsfw
@@ -39,10 +41,6 @@ export = (app: Probot) => {
 	});
 
 	async function commentRequest(context: any, error?: string) {
-		// Context is any here since Contex<"discussion"> throws:
-		// Expression produces a union type that is too complex to represent. ts(2590)
-		// and I have no idea how to fix it
-
 		const discussion = context.payload.discussion;
 		let response = `Hey @${discussion.user.login}, thanks for creating the Presence Request! `;
 

@@ -1,4 +1,4 @@
-import { InvalidSchemaError } from './errors';
+import { InvalidRequestError } from './errors';
 
 interface PresenceRequest {
     regionRestricted: boolean,
@@ -17,7 +17,7 @@ export function praseRequest(text: string): PresenceRequest {
 	const checkboxesRegex = /- \[[xX ]\]/gm;
 	const checkboxesRaw = text.match(checkboxesRegex);
 	if(checkboxesRaw == null || checkboxesRaw.length != 3) {
-		throw new InvalidSchemaError('This discussion doesn\'t use the [Service Request Template](https://github.com/PreMiD/Presences/discussions/4658)');
+		throw new InvalidRequestError('This discussion doesn\'t use the [Service Request Template](https://github.com/PreMiD/Presences/discussions/4658)');
 	}
 	const checkboxes = checkboxesRaw.map(x => x.includes('x'));
 
@@ -34,7 +34,7 @@ export function praseRequest(text: string): PresenceRequest {
 		}
 	}
 	else {
-		throw new InvalidSchemaError('No valid URL for the service was found');
+		throw new InvalidRequestError('No valid URL for the service was found');
 	}
 
 	return {

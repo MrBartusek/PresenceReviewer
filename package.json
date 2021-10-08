@@ -18,12 +18,19 @@
     "test": "jest"
   },
   "dependencies": {
+    "adm-zip": "^0.5.9",
+    "axios": "^0.22.0",
     "dedent-js": "^1.0.1",
-    "probot": "^12.1.1"
+    "probot": "^12.1.1",
+    "psl": "^1.8.0",
+    "url-parse": "^1.5.3",
+    "whoiser": "^1.13.0"
   },
   "devDependencies": {
+    "@types/adm-zip": "^0.4.34",
     "@types/jest": "^26.0.19",
-    "@types/node": "^14.14.19",
+    "@types/node": "^14.17.21",
+    "@types/psl": "^1.1.0",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
     "eslint": "^7.32.0",
