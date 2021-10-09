@@ -47,7 +47,6 @@ export default class Tranco {
 		const domainSplit = domain.split('.');
 		const host = `${domainSplit[domainSplit.length - 2]}.${domainSplit[domainSplit.length - 1]}`;
 		const result = (await this._getList()).list[host];
-		console.log(result);
 		return result ? result : 10000000;
 	}
 
