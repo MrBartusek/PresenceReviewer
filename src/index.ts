@@ -34,7 +34,7 @@ export = (app: Probot) => {
 			}
 		}
 
-		// Validate the schema
+		// Validate the request
 		let request, verifyUrlResult;
 		const discussionInfo = await graphql.getDiscussionInfo(context, discussion.number);
 		try {
