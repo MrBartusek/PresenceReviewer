@@ -34,7 +34,7 @@ export async function verifyUrl(logger: Logger, rawUrl: string): Promise<UrlVeri
 	const registered = new Date(registeredString.substr(0, registeredString.indexOf('T')));
 	const daysDiff = Math.floor(Math.abs(new Date().valueOf() - registered.valueOf()) / 86400000);
 	if(daysDiff < 60) {
-		throw new InvalidRequestError(`Websites must be at least 2 months old - \`${url}\` was registered ${daysDiff} days ago.`);
+		throw new InvalidRequestError(`Websites must be at least 2 months old \`${url}\` was registered ${daysDiff} days ago.`);
 	}
 	logger.info(`Website ${url} is ${daysDiff} days old`);
 
