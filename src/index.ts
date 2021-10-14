@@ -75,6 +75,7 @@ export = (app: Probot) => {
 		}
 		else {
 			app.log.info('This request is valid');
+			response = '✔️ ' + response;
 			response += dedent` Please note that coding presences is completely voluntary and may take time for your\
 			service to be added regardless of priority!`;
 		}
