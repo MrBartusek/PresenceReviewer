@@ -7,6 +7,7 @@ import * as graphql from './graphql';
 
 export = (app: Probot) => {
 	app.on(['discussion.created', 'discussion_comment.created'], async (context) => {
+		if(context.isBot) return;
 		const discussion = context.payload.discussion;
 		app.log.info(`Processing ${context.name} on ${context.payload.repository.full_name}#${discussion.number} by ${context.payload.sender.login}`);
 
