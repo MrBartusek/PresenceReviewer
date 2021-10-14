@@ -36,11 +36,13 @@ export async function verifyUrl(logger: Logger, rawUrl: string): Promise<UrlVeri
 	if(daysDiff < 60) {
 		throw new InvalidRequestError(`Websites must be at least 2 months old - \`${url}\` was registered ${daysDiff} days ago.`);
 	}
+	logger.info(`Website ${url} is ${daysDiff} days old`);
 
 	// Check popularity
 	const tranco = new Tranco(logger);
 	const rank = await tranco.getRank(url);
 	const popular = rank <= 10000;
+	logger.info(`Website ${url} tranco rank is #${rank} (popular: ${popular})`);
 
 	return {popular: popular};
 }

@@ -58,12 +58,12 @@ export default class Tranco {
 				this.logger.info('Updating tranco list because it\'s older than 7 days');
 				return await this.update()
 					.catch((error: Error) => {
-						this.logger.warn('Failed to update old tranco list: ' + error);
+						this.logger.warn(error, 'Failed to update old tranco list, using the old one');
 						return result;
 					});
 			}
 			else {
-				return result.data;
+				return result;
 			}
 		}
 		else {

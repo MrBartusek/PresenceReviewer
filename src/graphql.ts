@@ -8,13 +8,26 @@ interface LabelList {
 	nsfw?: boolean
 }
 
-export async function getDiscussionBody(context: any, number: number): Promise<string> {
+interface DiscussionInfo {
+	body: string,
+	currentCommentId?: string,
+}
+
+export async function getDiscussionInfo(context: any, number: number): Promise<DiscussionInfo> {
 	const repo = context.payload.repository;
 	const response = await context.octokit.graphql(`
 		query($repoOwner: String!, $repoName: String!, $number: Int!) {
 			repository(owner: $repoOwner, name: $repoName) {
 				discussion(number: $number) {
-					body
+					body,
+					comments(first: 100) {
+						edges {
+							node {
+								id,
+								viewerDidAuthor
+						  	}
+						}
+					}
 				}
 			}
 		}
@@ -23,13 +36,35 @@ export async function getDiscussionBody(context: any, number: number): Promise<s
 		repoName: repo.name,
 		number: number
 	}) as any;
-	return response.repository.discussion.body;
+
+	const discussion = response.repository.discussion;
+	const comment = discussion.comments.edges.find((x: any) => x.node.viewerDidAuthor);
+	return {
+		body: discussion.body,
+		currentCommentId: comment ? comment.node.id : comment,
+	}; 
 }
 
-export async function commentDiscussion(context: Context, nodeId: string, body: string): Promise<void> {
+export async function commentDiscussion(context: Context, nodeId: string, body: string, replyToId?: string): Promise<void> {
+	await context.octokit.graphql(`
+		mutation($id: ID!, $body: String!, $replyToId: ID) {
+			addDiscussionComment(input: {discussionId: $id, body: $body, replyToId: $replyToId}) {
+				comment {
+					body
+				}
+			}
+		}
+	`, {
+		id: nodeId,
+		body: body,
+		replyToId: replyToId
+	}) as any;
+}
+
+export async function updateDiscussionComment(context: Context, nodeId: string, body: string): Promise<void> {
 	await context.octokit.graphql(`
 		mutation($id: ID!, $body: String!) {
-			addDiscussionComment(input: {discussionId: $id, body: $body}) {
+			updateDiscussionComment(input: {commentId: $id, body: $body}) {
 				comment {
 					body
 				}
@@ -94,4 +129,17 @@ export async function labelDiscussion(context: any, labelsToAdd: LabelList): Pro
 		labels: labelsIds
 	}
 	) as any;
+}
+
+export async function addDiscussionReaction(context: Context, id: string, reaction = 'THUMBS_UP'): Promise<void> {
+	await context.octokit.graphql(`
+		mutation($id: ID!, $reaction: ReactionContent!) {
+			addReaction(input: {subjectId: $id, content: $reaction}) {
+				clientMutationId 
+			}
+		}
+	`, {
+		id: id,
+		reaction: reaction
+	}) as any;
 }
